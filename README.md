@@ -24,7 +24,7 @@ flowchart LR
   W --> D[D1 atomic quotas + pseudonymous usage]
   W --> A[Sally API dev]
   A --> L[Luna Decisions → Sol Responses → Luna Responses]
-  W -. shadow .-> R[Reference rules (shadow)]
+  W -. shadow .-> R["Reference rules (shadow)"]
   W -. optional shadow .-> N[Sally-Nano inference]
   W --> H[Retailer URL + copyable list]
   H --> E[Sally Chrome extension]
