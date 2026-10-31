@@ -4,6 +4,10 @@ vi.mock("@cloudflare/workers-oauth-provider", () => ({
     redirectTo?: string;
   },
 }));
+vi.mock("../src/privacy", () => ({
+  limit: vi.fn().mockResolvedValue(true),
+  pseudonym: vi.fn().mockResolvedValue("synthetic-pseudonym"),
+}));
 import { authorize } from "../src/auth";
 import type { Env } from "../src/types";
 let env: Env;
@@ -90,3 +94,43 @@ it("denial uses the safe helper redirect", async () => {
   expect(r.status).toBe(302);
   expect(r.headers.get("location")).toContain("error=access_denied");
 });
+
+it.each([503, 200])(
+  "does not present a code form when email delivery fails with HTTP %s",
+  async (status) => {
+    env.SALLY_API_URL = "https://upstream.invalid";
+    vi.mocked(env.OAUTH_PROVIDER.approveConsent).mockResolvedValue({
+      headers: new Headers(),
+      request: {},
+    } as never);
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValue(
+          Response.json(
+            { success: false, error: "private-provider-detail" },
+            { status },
+          ),
+        ),
+    );
+    const response = await authorize(
+      new Request(env.PUBLIC_ORIGIN + "/authorize/send", {
+        method: "POST",
+        headers: { Origin: env.PUBLIC_ORIGIN },
+        body: new URLSearchParams({
+          handle: "a".repeat(30),
+          email: "fixture@example.invalid",
+          decision: "approve",
+        }),
+      }),
+      env,
+    );
+    expect(response.status).toBe(503);
+    const text = await response.text();
+    expect(text).toContain("could not send your sign-in email");
+    expect(text).not.toContain('name="code"');
+    expect(text).not.toContain("private-provider-detail");
+    expect(text).not.toContain("fixture@example.invalid");
+  },
+);

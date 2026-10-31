@@ -1,0 +1,12 @@
+{
+  "model": "s5-nano1x64-mf12-s0:int8",
+  "source_commit": "783d7668215edf33515c74a94d1fb6af72bdfa92",
+  "max_length": 48,
+  "files": {
+    "model.int8.onnx": "c61eab67d1c8710f8ed01ab49d3ecb59d993ec68ed51cf42e797be3f326bc573",
+    "tokenizer.json": "75185d67323b4060fc2c49e130c641614190768b3b12d55de6743ce3571a8f87",
+    "tokenizer_config.json": "872b6936be955bc3aea75ed599264d865626d68feede7e58b01e378e6332bd74",
+    "idmap.npy": "d28b369ee11c394b7c7d073f7e613024e487b2cd851996abe73dbf9ce1563151",
+    "info.json": "089e91b24c5b4c41d1915d5c341270456f4cae9598b8863a6211baee6c538ed8"
+  }
+}

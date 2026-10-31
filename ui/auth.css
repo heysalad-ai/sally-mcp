@@ -1,0 +1,159 @@
+/* Adapted from Hey-Salad/heysalad-payme, heysalad-oauth/src/ui.ts.
+   Sally retains its server-rendered, browser-bound email-code flow. */
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: #fff;
+  color: #1f1416;
+  font:
+    16px/1.5 Figtree,
+    system-ui,
+    sans-serif;
+}
+.auth-card {
+  width: 100%;
+  max-width: 480px;
+  padding: 40px;
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 4px 32px rgb(31 20 22 / 7%);
+}
+.auth-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+.brand-mark {
+  width: 208px;
+  max-width: 100%;
+  margin: 0 auto 12px;
+}
+.brand-mark svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.tagline {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+p {
+  margin: 0 0 12px;
+}
+.consent-details {
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 24px;
+  overflow-wrap: anywhere;
+}
+.consent-details p {
+  margin-bottom: 8px;
+}
+.consent-details ul {
+  padding-left: 20px;
+  margin: 8px 0;
+}
+.consent-details .client-note {
+  color: #666;
+  font-size: 13px;
+}
+.safety-note {
+  font-weight: 600;
+}
+label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+input:not([type="hidden"]) {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 14px 16px;
+  margin-top: 8px;
+  border: 2px solid #e5e5e5;
+  border-radius: 12px;
+  background: #fff;
+  color: #1f1416;
+  font: inherit;
+}
+input::placeholder {
+  color: #777;
+}
+input:focus-visible {
+  outline: 3px solid #faa09a;
+  outline-offset: 2px;
+  border-color: #ed4c4c;
+}
+.hint {
+  display: block;
+  margin: 8px 0 22px;
+  color: #666;
+  font-size: 14px;
+}
+button {
+  width: 100%;
+  padding: 14px 20px;
+  border: 0;
+  border-radius: 12px;
+  background: #ed4c4c;
+  color: #fff;
+  font:
+    700 20px/1.4 Figtree,
+    system-ui,
+    sans-serif;
+  cursor: pointer;
+}
+button:hover {
+  background: #d93c3c;
+}
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid #faa09a;
+  outline-offset: 3px;
+}
+button[value="deny"] {
+  margin-top: 10px;
+  padding: 10px;
+  background: transparent;
+  color: #a32128;
+  font-size: 15px;
+  font-weight: 500;
+}
+button[value="deny"]:hover {
+  background: #fff8f6;
+}
+input[name="code"] {
+  letter-spacing: 0.3em;
+  font-size: 24px;
+}
+.company-footer {
+  border-top: 1px solid #eee;
+  margin: 26px 0 0;
+  padding-top: 20px;
+  text-align: center;
+  color: #666;
+  font-size: 13px;
+}
+a {
+  color: #a32128;
+  text-underline-offset: 3px;
+}
+@media (max-width: 520px) {
+  body {
+    padding: 24px 16px;
+  }
+  .auth-card {
+    padding: 28px 24px;
+    border-radius: 20px;
+  }
+}

@@ -1,17 +1,17 @@
-# Sally — app directory submission draft
+# Sally by HeySalad® — app directory submission draft
 
 Status: staging review pack. **Do not submit yet. Peter submits.**
 
-- Name: Sally
+- Name: Sally by HeySalad®
 - Owner/developer: HeySalad Inc.
 - Tagline: love your food
 - Short description: Plan grocery lists and review product matches with Sally.
-- Description: Sally is HeySalad’s AI grocery assistant. Turn recipes into shopping lists, compare products supplied from Ocado, Waitrose, Tesco or Asda pages, and understand product choices. See observed prices, pack sizes, confidence and amber notes when quantities need a second look. Prepare a copyable shopping list and hand it to the Sally Chrome extension. You review your basket and always check out and pay yourself.
+- Description: Sally by HeySalad® is HeySalad Inc.’s AI grocery assistant. Turn recipes into shopping lists, compare products supplied from Ocado, Waitrose, Tesco or Asda pages, and understand product choices. See observed prices, pack sizes, confidence and amber notes when quantities need a second look. Prepare a copyable shopping list and hand it to the Sally Chrome extension. You review your basket and always check out and pay yourself.
 - Website: https://heysalad.ai/sally
 - Privacy policy: https://heysalad.ai/sally/privacy — must be approved, published and verified before submission.
 - Support: peter@heysalad.ai
 - Source: https://github.com/Hey-Salad/sally-mcp
-- MCP URL for current staging validation: https://sally-mcp-staging.heysalad-o.workers.dev/mcp
+- Public beta MCP URL: https://mcp.heysalad.ai/mcp (dev API; email sign-in restricted to Peter; not directory-submitted)
 - Transport: Streamable HTTP
 - Authentication: mixed (anonymous matching plus OAuth 2.1 for account tools).
 - OAuth scope: `sally:tools`; optional `offline_access`.
@@ -35,3 +35,13 @@ Tool descriptions and schemas are served by MCP discovery. The plugin skill is `
 ## Screenshots
 
 Use the files in `screenshots/` and their captions in `screenshots/README.md`. Distinguish actual ChatGPT host screenshots from standalone UI previews and illustrative fixtures. Replace any preview image with a real host screenshot before public submission if required by review.
+
+## Welcome copy
+
+Hey! 👋 🥗
+
+Welcome to Sally by HeySalad®! What are we cooking or shopping for today?
+
+I can help you turn recipes into shopping lists, find matching groceries, or prepare a basket for Tesco, ASDA, Waitrose, or Ocado.
+
+Developer: HeySalad Inc. Use the actual HeySalad mark in `plugin/assets/heysalad.svg` or the accompanying PNG. Select the verified HeySalad Inc. developer identity in OpenAI’s dashboard; the personal custom MCP connection can show its creator’s account name independently of package metadata.

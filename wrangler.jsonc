@@ -7,7 +7,7 @@
   "rules": [
     {
       "type": "Text",
-      "globs": ["**/*.html"],
+      "globs": ["**/*.html", "**/*.css"],
       "fallthrough": true,
     },
   ],
@@ -55,6 +55,33 @@
         },
       ],
       "preview_urls": false,
+    },
+    "branded_preview": {
+      "name": "sally-mcp-branded-preview",
+      "workers_dev": true,
+      "preview_urls": false,
+      "vars": {
+        "PUBLIC_ORIGIN": "https://mcp.heysalad.ai",
+        "SALLY_API_URL": "https://sally-api-dev.heysalad-o.workers.dev",
+        "PROXY_ONLY": "true",
+      },
+      "triggers": {
+        "crons": ["17 3 * * *"],
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "sally-mcp-branded-preview",
+          "database_id": "c86cdba6-53c6-489a-8eaf-670bed58667e",
+          "migrations_dir": "migrations",
+        },
+      ],
+      "kv_namespaces": [
+        {
+          "binding": "OAUTH_KV",
+          "id": "5e49dcac0f4e490191b5cd74190b9261",
+        },
+      ],
     },
   },
 }

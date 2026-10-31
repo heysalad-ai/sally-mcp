@@ -8,3 +8,11 @@ playwright-report/
 test-results/
 *.log
 coverage/
+
+.venv-nano/
+__pycache__/
+*.pyc
+# Trained model artifacts must remain private.
+*.onnx
+*.npy
+submission/sally-workspace-plugin.zip

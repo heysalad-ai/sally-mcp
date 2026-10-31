@@ -2,7 +2,7 @@
   "mcpServers": {
     "sally": {
       "type": "http",
-      "url": "https://sally-mcp-staging.heysalad-o.workers.dev/mcp"
+      "url": "https://mcp.heysalad.ai/mcp"
     }
   }
 }

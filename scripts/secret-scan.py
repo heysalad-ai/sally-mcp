@@ -7,11 +7,11 @@ try:
  tracked=subprocess.check_output(['git','ls-files'],cwd=root,text=True).splitlines()
  for name in tracked:
   leaf=pathlib.Path(name).name
-  if leaf.startswith(('.env','.dev.vars')) and not leaf.endswith('.example'):found.append(name)
+  if (leaf.startswith(('.env','.dev.vars')) and not leaf.endswith('.example')) or pathlib.Path(name).suffix in ('.onnx','.npy') or leaf in ('tokenizer.json','tokenizer_config.json'):found.append(name)
 except subprocess.CalledProcessError:pass
 
 for path in root.rglob('*'):
- if not path.is_file() or any(p in ('node_modules','.git','.wrangler','dist','test-results','playwright-report') for p in path.relative_to(root).parts) or path.name.startswith(('.env','.dev.vars')) or path.suffix in ('.png','.jpg','.zip','.woff2'):continue
+ if not path.is_file() or any(p in ('node_modules','.next','.vercel','.git','.wrangler','dist','test-results','playwright-report','.venv-nano','__pycache__') for p in path.relative_to(root).parts) or path.name.startswith(('.env','.dev.vars')) or path.suffix in ('.png','.jpg','.zip','.woff2'):continue
  try:text=path.read_text()
  except UnicodeError:continue
  if any(re.search(pattern,text) for pattern in patterns):found.append(str(path.relative_to(root)))

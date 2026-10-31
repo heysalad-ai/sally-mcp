@@ -49,6 +49,7 @@ export async function checkCandidate(
   token: string,
   runId: string,
   itemIndex: number,
+  shoppingRequestId?: string,
 ) {
   const rules = rulesCheck(line, `${chosen.name} ${chosen.pack_size}`);
   const result = verdict.parse(
@@ -67,6 +68,8 @@ export async function checkCandidate(
         itemIndex,
       },
       token,
+      env.SALLY_API_URL,
+      shoppingRequestId,
     ),
   );
   let nano: Record<string, unknown> = {

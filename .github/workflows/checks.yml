@@ -18,3 +18,28 @@ jobs:
       - run: npm run secrets:check
       - run: npx playwright install --with-deps chromium
       - run: npm run test:ui
+      - run: npm run test:runtime
+      - run: npm run test:runtime:proxy
+  nano-service:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: inference/requirements.txt
+      - run: pip install -r inference/requirements.txt
+      - run: python -m unittest discover -s inference -p 'test_*.py' -v
+  vercel-proxy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: vercel-proxy/package-lock.json
+      - run: npm ci --prefix vercel-proxy
+      - run: npm test --prefix vercel-proxy
+      - run: npm run build --prefix vercel-proxy

@@ -1,0 +1,7 @@
+*
+!requirements.txt
+!predictor.py
+!server.py
+!artifact-manifest.json
+!vendor/
+!vendor/*.py

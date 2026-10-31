@@ -1,8 +1,9 @@
 import { spawn } from "node:child_process";
+import { mkdirSync, writeFileSync } from "node:fs";
 const config = {
   mcp_servers: {
     sally: {
-      url: "https://sally-mcp-staging.heysalad-o.workers.dev/mcp",
+      url: "https://mcp.heysalad.ai/mcp",
       tool_timeout_sec: 120,
     },
   },
@@ -16,10 +17,16 @@ const args = [
   "--skip-git-repo-check",
   "--json",
   "-c",
+  "features.apps=false",
+  "-c",
   `mcp_servers.sally.url=${JSON.stringify(config.mcp_servers.sally.url)}`,
   "-c",
   "mcp_servers.sally.tool_timeout_sec=120",
-  'Call only Sally MCP match_products with list ["milk"], retailer "ocado", candidates []. Report the actual tool result and its amber note. Do not use shell, browser, web, other MCP servers or other tools. This is a validation call; no basket or payment actions.',
+  "-c",
+  "mcp_servers.sally.startup_timeout_sec=60",
+  "-c",
+  "mcp_servers.sally.required=true",
+  'Call Sally match_products with list ["milk"], retailer "ocado", candidates []. This is an anonymous validation. Use only Sally tools. Report the actual tool result.',
 ];
 const child = spawn("codex", args, { stdio: ["ignore", "pipe", "pipe"] });
 let stdout = "",
@@ -59,6 +66,12 @@ child.on("close", (code) => {
     )
   ) {
     console.error("Sally MCP call was not observed");
+    mkdirSync(".wrangler", { recursive: true });
+    writeFileSync(".wrangler/codex-smoke.stderr", stderr, { mode: 0o600 });
+    writeFileSync(".wrangler/codex-smoke.events", stdout, { mode: 0o600 });
+    console.error(
+      "Startup diagnostics saved privately in .wrangler/codex-smoke.stderr",
+    );
     process.exitCode = 1;
     return;
   }

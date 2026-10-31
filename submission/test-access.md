@@ -15,3 +15,5 @@ Manual host validation:
 5. For Codex, use the README config, then `codex mcp login sally` and enter the code personally.
 
 Submission is not authorised for the agent. Peter submits after the verification ledger’s blockers are resolved.
+
+Current ChatGPT setup uses Plugins → + → Add custom MCP server; the current official flow does not require a separate developer-mode toggle. If the direct private-plugin URL downloads an extensionless file, use the Plugins interface instead. Installation alone does not prove an in-chat tool/widget or account login works.

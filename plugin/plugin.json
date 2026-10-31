@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "sally",
-  "version": "0.1.0",
-  "description": "Sally by HeySalad: match supplied grocery candidates, explain choices, turn recipes into lists, and hand off to the Sally extension. You check out and pay.",
+  "version": "0.1.2",
+  "description": "Sally by HeySalad® is HeySalad Inc.’s AI grocery assistant. Turn recipes into shopping lists, review supplied product candidates from Tesco, ASDA, Waitrose or Ocado, and prepare a Sally Chrome extension basket handoff. You always check out and pay.",
   "author": {
     "name": "HeySalad Inc.",
     "email": "peter@heysalad.ai",
@@ -15,9 +15,27 @@
   "extensions": {
     "com.openai": {
       "interface": {
-        "displayName": "Sally",
+        "displayName": "Sally by HeySalad®",
         "shortDescription": "love your food",
-        "logo": "./assets/sally.svg"
+        "longDescription": "Sally by HeySalad® is HeySalad Inc.’s AI grocery assistant. Turn recipes into shopping lists, review supplied product candidates from Tesco, ASDA, Waitrose or Ocado, and prepare a Sally Chrome extension basket handoff. You always check out and pay.",
+        "developerName": "HeySalad Inc.",
+        "category": "Productivity",
+        "capabilities": [
+          "Grocery matching",
+          "Recipe shopping lists",
+          "Match explanations",
+          "Extension handoff"
+        ],
+        "websiteURL": "https://heysalad.ai/sally",
+        "privacyPolicyURL": "https://heysalad.ai/sally/privacy",
+        "brandColor": "#ed4c4c",
+        "logo": "./assets/heysalad.png",
+        "composerIcon": "./assets/heysalad.png",
+        "defaultPrompt": [
+          "Plan my week’s shop for 4 at Ocado",
+          "Turn this recipe into a shopping list",
+          "Explain this grocery match"
+        ]
       }
     }
   }

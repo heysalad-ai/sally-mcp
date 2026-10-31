@@ -1,3 +1,4 @@
+import { submitShoppingList } from "./billing";
 import { z } from "zod";
 import type { Env, Identity, ToolName } from "./types";
 import { toolInputs, normaliseList, recipeOutput } from "./schemas";
@@ -19,7 +20,7 @@ export async function executeTool(
   if (name === "match_products") {
     const input = toolInputs.match_products.parse(args);
     const items = normaliseList(input.list);
-    const runId = crypto.randomUUID();
+    const runId = input.submission_id ?? crypto.randomUUID();
     if (
       new Set(input.candidates.map((c) => c.item_index)).size !==
         input.candidates.length ||
@@ -36,6 +37,12 @@ export async function executeTool(
       identity?.upstreamToken ||
       (await env.OAUTH_KV?.get("guest:upstream")) ||
       env.SALLY_ANONYMOUS_TOKEN;
+    const shoppingRequest = await submitShoppingList(
+      env,
+      items.map(lineText),
+      runId,
+      token,
+    );
     const matches = [];
     for (let i = 0; i < items.length; i++) {
       const notes: { style: "amber"; text: string }[] = [];
@@ -58,6 +65,7 @@ export async function executeTool(
           token!,
           runId,
           i,
+          shoppingRequest?.shopping_request_id,
         );
         if (
           result.verdict === "confirm" &&
@@ -98,6 +106,7 @@ export async function executeTool(
       matches,
       retailer: input.retailer,
       run_id: runId,
+      ...(shoppingRequest ? { submission_id: runId, ...shoppingRequest } : {}),
       checked_at: new Date().toISOString(),
       source:
         "user-supplied retailer-page candidates; prices are observations, not live catalogue quotes",
@@ -112,15 +121,33 @@ export async function executeTool(
     );
   if (name === "explain_match") {
     const input = toolInputs.explain_match.parse(args);
+    const submissionId = input.submission_id ?? crypto.randomUUID();
+    const shoppingRequest = input.shopping_request_id
+      ? { shopping_request_id: input.shopping_request_id }
+      : await submitShoppingList(
+          env,
+          [lineText(input.item)],
+          submissionId,
+          identity.upstreamToken,
+        );
     const result = await checkCandidate(
       env,
       lineText(input.item),
       { ...input.product, in_stock: true },
       identity.upstreamToken,
-      crypto.randomUUID(),
+      submissionId,
       0,
+      shoppingRequest?.shopping_request_id,
     );
     return {
+      ...(shoppingRequest
+        ? {
+            ...shoppingRequest,
+            ...(input.shopping_request_id
+              ? {}
+              : { submission_id: submissionId }),
+          }
+        : {}),
       matches: result.verdict === "confirm",
       explanation: result.reason,
       confidence: result.confidence ?? null,
@@ -140,13 +167,22 @@ export async function executeTool(
         identity.upstreamToken,
       ),
     );
+    if (result.servings !== undefined && result.servings !== input.servings)
+      throw new ToolError(
+        "SERVINGS_MISMATCH",
+        `Sally returned quantities for ${result.servings} servings instead of ${input.servings}. Please try again.`,
+      );
     return {
-      ...result,
-      servings: input.servings,
+      items: result.items,
+      requested_servings: input.servings,
+      applied_servings: result.servings ?? null,
       notes: [
         {
           style: "amber",
-          text: "Review ingredient quantities: the Sally API may apply your saved household size. Confirm scaling before shopping.",
+          text:
+            result.servings === undefined
+              ? "Sally has not confirmed the serving count. Confirm ingredient amounts before shopping."
+              : "Review ingredient amounts, pack sizes and allergens before shopping.",
         },
       ],
     };
@@ -158,7 +194,11 @@ export async function executeTool(
     url: stores[input.retailer],
     list: items,
     extension_text: items
-      .map((i) => `${i.quantity}${i.unit ? ` ${i.unit}` : ""} ${i.name}`)
+      .map((i, index) =>
+        typeof input.list[index] === "string"
+          ? input.list[index]
+          : `${i.quantity}${i.unit ? ` ${i.unit}` : ""} ${i.name}`,
+      )
       .join("\n"),
     instructions: [
       "Open the retailer link in Chrome.",

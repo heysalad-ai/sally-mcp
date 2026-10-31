@@ -284,6 +284,20 @@ describe("recipe_to_list", () => {
   });
 });
 describe("basket_link", () => {
+  it("preserves free-text quantities instead of prefixing a second quantity", async () => {
+    const result = await executeTool(
+      "basket_link",
+      { list: ["200g pasta", "1 onion", "milk"], retailer: "ocado" },
+      env,
+      identity,
+    );
+    expect(result).toMatchObject({
+      extension_text: "200g pasta\n1 onion\nmilk",
+      checkout: false,
+      payment: false,
+    });
+    expect(fetcher).not.toHaveBeenCalled();
+  });
   it.each(["ocado", "waitrose", "tesco", "asda"])(
     "prepares %s handoff without network, checkout or payment",
     async (retailer) => {
@@ -353,4 +367,54 @@ it("uses Worker-supported manual redirects and refuses redirects without forward
   );
   expect(fetcher.mock.calls[0][1].redirect).toBe("manual");
   expect(fetcher).toHaveBeenCalledTimes(1);
+});
+
+it("does not label legacy recipe output as confirmed scaling", async () => {
+  fetcher.mockResolvedValue(
+    Response.json({ items: [{ name: "pasta", quantity: 200, unit: "g" }] }),
+  );
+  const result = await executeTool(
+    "recipe_to_list",
+    { recipe_text: "Pasta", servings: 4 },
+    env,
+    identity,
+  );
+  expect(result).toMatchObject({
+    requested_servings: 4,
+    applied_servings: null,
+  });
+  expect(result).not.toHaveProperty("servings");
+  expect(JSON.stringify(result)).toContain("has not confirmed");
+});
+it("reports the serving count confirmed by the API", async () => {
+  fetcher.mockResolvedValue(
+    Response.json({
+      items: [{ name: "pasta", quantity: 400, unit: "g" }],
+      servings: 4,
+    }),
+  );
+  expect(
+    await executeTool(
+      "recipe_to_list",
+      { recipe_text: "Pasta", servings: 4 },
+      env,
+      identity,
+    ),
+  ).toMatchObject({ requested_servings: 4, applied_servings: 4 });
+});
+it("rejects known recipe scaling mismatches", async () => {
+  fetcher.mockResolvedValue(
+    Response.json({
+      items: [{ name: "pasta", quantity: 200, unit: "g" }],
+      servings: 2,
+    }),
+  );
+  await expect(
+    executeTool(
+      "recipe_to_list",
+      { recipe_text: "Pasta", servings: 4 },
+      env,
+      identity,
+    ),
+  ).rejects.toThrow("2 servings instead of 4");
 });

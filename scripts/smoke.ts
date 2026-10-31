@@ -4,6 +4,13 @@ import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/
 const base = process.argv[2] ?? "http://localhost:8787";
 const client = new Client({ name: "sally-smoke", version: "0.1.0" });
 await client.connect(new StreamableHTTPClientTransport(new URL("/mcp", base)));
+const brand = client.getServerVersion();
+assert.equal(brand?.title, "Sally by HeySalad®");
+assert.equal(brand?.websiteUrl, "https://heysalad.ai/sally");
+const icon = await fetch(brand!.icons![0].src);
+assert.equal(icon.status, 200);
+assert.match(icon.headers.get("content-type") ?? "", /image\/svg\+xml/);
+assert.match(await icon.text(), /#ed4c4c/);
 const tools = await client.listTools();
 assert.deepEqual(tools.tools.map((t) => t.name).sort(), [
   "basket_link",
@@ -12,12 +19,21 @@ assert.deepEqual(tools.tools.map((t) => t.name).sort(), [
   "recipe_to_list",
 ]);
 const resources = await client.listResources();
-assert.equal(resources.resources[0].uri, "ui://sally/products.html");
-const widget = await client.readResource({ uri: "ui://sally/products.html" });
+assert.equal(resources.resources[0].uri, "ui://sally/products-v2.html");
+const widget = await client.readResource({
+  uri: "ui://sally/products-v2.html",
+});
 assert.match(
   String("text" in widget.contents[0] ? widget.contents[0].text : ""),
   /Grandstander/,
 );
+const imageOrigins = (widget.contents[0]._meta as any).ui.csp.resourceDomains;
+for (const origin of [
+  "https://digitalcontent.api.tesco.com",
+  "https://ecom-su-static-prod.wtrecom.com",
+  "https://asdagroceries.scene7.com",
+])
+  assert.ok(imageOrigins.includes(origin));
 const result = await client.callTool({
   name: "match_products",
   arguments: { list: ["milk"], retailer: "ocado", candidates: [] },
